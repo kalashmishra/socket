@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="/stylesheets/style.css">
+</head>
+<body>
+   <div id="overlay">
+    <input type="text" name="" id="name">
+    <button id="setname">setname</button>
+   </div>
+  <textarea style="resize: none; margin: 10px;padding:5px 10px;" ></textarea>
+  <button id="send" style="padding: 5px;">send message</button>
+  <div class="activeuser"><h3 >Activeuser: <span class="online"></span></h3></div>
+  <div class="msgs"> </div>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.1/socket.io.js" integrity="sha512-Z6C1p1NIexPj5MsVUunW4pg7uMX6/TT3CUVldmjXx2kpip1eZcrAnxIusDxyFIikyM9A61zOVNgvLr/TGudOQg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script>
+    var socket = io();
+    var nameval
+   var textarea = document.querySelector("textarea")
+   var button= document.querySelector("#send")
+   document.querySelector("#setname").addEventListener("click", function(){
+     nameval = document.querySelector("#name").value
+    socket.emit("name" , nameval)
+    nameval.value=""
+    document.querySelector("#overlay").style.display="none"
+   })
+   button.addEventListener("click", function(){
+  socket.emit("msg" ,{name:nameval, msg: textarea.value,})
+  textarea.value=""
+   })
+    socket.on("msg", function(data){
+  document.querySelector(".msgs").innerHTML +=` <div class="msg"><h3>${data.name}:${data.msg}</h3></div>`
+   })
+   socket.on("onlineuser", function(data){
+  document.querySelector(".online").textContent=`${data}`
+   })
+  
+</script>
+</body>
+</html>
